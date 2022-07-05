@@ -4,6 +4,7 @@ import {
   UseInterceptors,
   UploadedFile,
   UploadedFiles,
+  Body,
 } from '@nestjs/common';
 import { ImagesService } from './images.service';
 import {
@@ -13,21 +14,15 @@ import {
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { v4 as uuidv4 } from 'uuid';
+import { Request } from 'express';
 
 @Controller('images')
 export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
 
-  @Post('upload-file')
-  @UseInterceptors(FileInterceptor('file'))
-  uploadFile(@UploadedFile() file: Express.Multer.File) {
-    console.log(file);
-    return file;
-  }
-
-  @Post('store-file')
+  @Post('process')
   @UseInterceptors(
-    FileInterceptor('file', {
+    FileInterceptor('image', {
       storage: diskStorage({
         destination: './files',
         filename: (req, file, callback) => {
@@ -38,8 +33,45 @@ export class ImagesController {
       }),
     }),
   )
+  processImage(
+    @UploadedFile() image: Express.Multer.File,
+    @Body() body: { properties: any },
+  ) {
+    console.log(JSON.parse(body.properties));
+    console.log(image);
+    return this.imagesService.getStats(
+      `${image.destination}/${image.filename}`,
+      // return this.imagesService.getMetadata(
+      //   `${image.destination}/${image.filename}`,
+    );
+  }
+
+  @Post('upload-file')
+  @UseInterceptors(FileInterceptor('file'))
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    console.log(file);
+    return file;
+  }
+
+  @Post('store-file')
+  @UseInterceptors(
+    FileInterceptor(
+      'file',
+      // {
+      //   storage: diskStorage({
+      //     destination: './files',
+      //     filename: (req, file, callback) => {
+      //       const fileExtName = extname(file.originalname);
+      //       const fileName = uuidv4();
+      //       callback(null, `${fileName}${fileExtName}`);
+      //     },
+      //   }),
+      // }
+    ),
+  )
   storeFile(@UploadedFile() file: Express.Multer.File) {
     console.log(file);
+    this.imagesService.store(file);
     return file;
   }
 
