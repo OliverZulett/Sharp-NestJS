@@ -75,6 +75,16 @@ export class ImagesController {
     return file;
   }
 
+  @Post('convert-file')
+  @UseInterceptors(FileInterceptor('file'))
+  convertFormat(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: { properties: any },
+  ) {
+    const { format } = JSON.parse(body.properties);
+    return this.imagesService.convertToFormat(file, format);
+  }
+
   @Post('store-files')
   @UseInterceptors(
     FileFieldsInterceptor(
