@@ -151,21 +151,19 @@ export class ImagesController {
     const { trimThreshold } = JSON.parse(body.properties);
     return this.imagesService.trimImage(file, trimThreshold);
   }
-  
+
   @Post('compose-files')
   @UseInterceptors(
-    FileFieldsInterceptor(
-      [
-        {
-          name: 'baseImage',
-          maxCount: 1,
-        },
-        {
-          name: 'image1',
-          maxCount: 1,
-        },
-      ]
-    ),
+    FileFieldsInterceptor([
+      {
+        name: 'baseImage',
+        maxCount: 1,
+      },
+      {
+        name: 'image1',
+        maxCount: 1,
+      },
+    ]),
   )
   composeImage(
     @UploadedFiles()
@@ -177,6 +175,30 @@ export class ImagesController {
   ) {
     console.log(files.image1[0].buffer);
     const { overlayOptions } = JSON.parse(body.properties);
-    return this.imagesService.composeImage(files.baseImage[0], files.image1[0], [overlayOptions]);
+    return this.imagesService.composeImage(
+      files.baseImage[0],
+      files.image1[0],
+      [overlayOptions],
+    );
+  }
+
+  @Post('rotate-image')
+  @UseInterceptors(FileInterceptor('image'))
+  rotateImage(
+    @UploadedFile() image: Express.Multer.File,
+    @Body() body: { properties: any },
+  ) {
+    const { rotateData } = JSON.parse(body.properties);
+    return this.imagesService.rotateImage(image, rotateData);
+  }
+
+  @Post('apply-effect')
+  @UseInterceptors(FileInterceptor('image'))
+  applyEffect(
+    @UploadedFile() image: Express.Multer.File,
+    @Body() body: { properties: any },
+  ) {
+    const { effectsData } = JSON.parse(body.properties);
+    return this.imagesService.setImageEffect(image, effectsData);
   }
 }
