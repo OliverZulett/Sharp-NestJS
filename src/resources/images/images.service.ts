@@ -68,14 +68,14 @@ export class ImagesService {
           colors: 256, //4,8,16,32,256
           quality: 100,
           compressionLevel: 9,
-        })
+        });
       } else {
         imageProcessed = imageProcessed.toFormat(format, {
-          quality: 100
+          quality: 100,
         });
       }
       console.log(await imageProcessed.metadata());
-      
+
       return imageProcessed.toFile(`${imagePath}/files/${imageName}.${format}`);
     } catch (error) {
       throw new InternalServerErrorException(error);
