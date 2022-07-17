@@ -8,15 +8,35 @@ import { ImageProperties } from '../../models/imageProperties.model';
 export class ProcessorService {
   constructor(private readonly sharpService: SharpService) {}
 
-  processImage(image: Express.Multer.File, imageProperties: ImageProperties) {
+  async processImage(
+    image: Express.Multer.File,
+    imageProperties: ImageProperties,
+  ) {
     const imagePath = image.path;
+    const imageName = image.filename;
+    let imageBuffer = await this.sharpService.getImageBuffer(image.path);
     if (imageProperties.convertProperties) {
-      this.sharpService.convertFormat(imagePath, imageProperties.convertProperties)
+      imageBuffer = await this.sharpService.convertFormat(
+        imagePath,
+        imageProperties.convertProperties,
+      );
     }
+    if (imageProperties.resizeProperties) {
+      imageBuffer = await this.sharpService.resizeImage(
+        imageBuffer,
+        imageProperties.resizeProperties,
+      );
+    }
+    const { format } = await this.sharpService.getMetadata(imageBuffer);
+    return this.sharpService.storeImage(
+      imageBuffer,
+      './processed-image',
+      `${imageName}.${format}`,
+    );
   }
 
   getMetadata(image: Express.Multer.File) {
-    return this.sharpService.getMetadata(image.path);
+    return this.sharpService.getMetadata(image.buffer);
   }
 
   getStats(image: Express.Multer.File) {

@@ -14,10 +14,10 @@ export class SharpService {
     this.imageProcessor.cache(false);
   }
 
-  getMetadata(imagePath: string) {
+  async getMetadata(imageBuffer: Buffer) {
     try {
       this.logger.debug('getting image metadata');
-      return this.imageProcessor(imagePath).metadata();
+      return this.imageProcessor(imageBuffer).metadata();
     } catch (error) {
       this.logger.error(error);
       throw new InternalServerErrorException(error.message);
@@ -44,7 +44,7 @@ export class SharpService {
     }
   }
 
-  convertFormat(
+  async convertFormat(
     imagePath: string,
     convertProperties: {
       format: keyof sharp.FormatEnum;
@@ -76,6 +76,51 @@ export class SharpService {
       throw new InternalServerErrorException(
         error.message,
         `Error converting image`,
+      );
+    }
+  }
+
+  async resizeImage(
+    imageBuffer: Buffer,
+    resizeProperties: {
+      width?: number;
+      height?: number;
+      options?: {
+        width?: number | undefined;
+        height?: number | undefined;
+        fit?: keyof sharp.FitEnum | undefined;
+        position?: number | string | undefined;
+        background?: sharp.Color | undefined;
+        kernel?: keyof sharp.KernelEnum | undefined;
+        withoutEnlargement?: boolean | undefined;
+        withoutReduction?: boolean | undefined;
+        fastShrinkOnLoad?: boolean | undefined;
+      };
+    },
+  ) {
+    try {
+      this.logger.debug(`resizing image`);
+      return this.imageProcessor(imageBuffer)
+        .resize(resizeProperties.width, resizeProperties.height)
+        .toBuffer();
+    } catch (error) {
+      this.logger.error(`Error converting image: ${error}`);
+      throw new InternalServerErrorException(
+        error.message,
+        `Error converting image`,
+      );
+    }
+  }
+
+  async getImageBuffer(imagePath: string) {
+    try {
+      this.logger.debug(`getting image buffer`);
+      return this.imageProcessor(imagePath).toBuffer();
+    } catch (error) {
+      this.logger.error(`Error getting image buffer: ${error}`);
+      throw new InternalServerErrorException(
+        error.message,
+        `Error getting image buffer`,
       );
     }
   }
