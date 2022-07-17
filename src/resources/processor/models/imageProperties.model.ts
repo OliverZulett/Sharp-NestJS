@@ -34,4 +34,8 @@ export interface ImageProperties {
     width: number;
     height: number;
   };
+  rotateProperties: {
+    angle?: number;
+    options?: sharp.RotateOptions;
+  };
 }

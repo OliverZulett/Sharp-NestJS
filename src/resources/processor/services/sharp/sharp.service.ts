@@ -37,10 +37,15 @@ export class SharpService {
   async storeImage(imageBuffer: Buffer, path: string, imageName: string) {
     try {
       this.logger.debug(`storing image: ${imageName}`);
-      return await this.imageProcessor(imageBuffer).toFile(`${path}/${imageName}`);
+      return await this.imageProcessor(imageBuffer).toFile(
+        `${path}/${imageName}`,
+      );
     } catch (error) {
       this.logger.error(`Error storing image: ${error}`);
-      throw new InternalServerErrorException(error.message, `Error storing image`);
+      throw new InternalServerErrorException(
+        error.message,
+        `Error storing image`,
+      );
     }
   }
 
@@ -144,6 +149,27 @@ export class SharpService {
       throw new InternalServerErrorException(
         error.message,
         `Error cropping image`,
+      );
+    }
+  }
+
+  async rotateImage(
+    imageBuffer: Buffer,
+    rotateProperties: {
+      angle?: number;
+      options?: sharp.RotateOptions;
+    },
+  ) {
+    try {
+      this.logger.debug(`rotating image`);
+      return await this.imageProcessor(imageBuffer)
+        .rotate(rotateProperties.angle, rotateProperties.options)
+        .toBuffer();
+    } catch (error) {
+      this.logger.error(`Error rotating image: ${error}`);
+      throw new InternalServerErrorException(
+        error.message,
+        `Error rotating image`,
       );
     }
   }

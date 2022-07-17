@@ -46,6 +46,12 @@ export class ProcessorService {
         imageProperties.cropProperties,
       );
     }
+    if (imageProperties.rotateProperties) {
+      imageBuffer = await this.sharpService.rotateImage(
+        imageBuffer,
+        imageProperties.rotateProperties,
+      );
+    }
     const { format } = await this.sharpService.getMetadata(imageBuffer);
     return this.sharpService.storeImage(
       imageBuffer,
