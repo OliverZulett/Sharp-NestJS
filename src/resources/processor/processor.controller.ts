@@ -13,18 +13,24 @@ import { extname } from 'path';
 import { ProcessorService } from './services/processor/processor.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ImageProperties } from './models/imageProperties.model';
+import {
+  UNPROCESSED_IMAGE_PATH,
+  PROCESSED_IMAGE_PATH,
+} from '../../constants/path.constants';
+import { existsSync, mkdirSync } from 'fs';
 
 @Controller('processor')
 export class ProcessorController {
   private readonly logger = new Logger(ProcessorController.name);
 
-  constructor(private readonly processorService: ProcessorService) {}
+  constructor(private readonly processorService: ProcessorService) {
+  }
 
   @Post('process')
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
-        destination: './images',
+        destination: UNPROCESSED_IMAGE_PATH,
         filename: (req, file, callback) => {
           const fileName = uuidv4();
           const fileExt = extname(file.originalname);
