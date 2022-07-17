@@ -52,6 +52,16 @@ export class ProcessorService {
         imageProperties.rotateProperties,
       );
     }
+    if (imageProperties.verticalFlip) {
+      imageBuffer = await this.sharpService.verticalFlipImage(
+        imageBuffer
+      );
+    }
+    if (imageProperties.horizontalFlip) {
+      imageBuffer = await this.sharpService.horizontalFlipImage(
+        imageBuffer
+      );
+    }
     const { format } = await this.sharpService.getMetadata(imageBuffer);
     return this.sharpService.storeImage(
       imageBuffer,

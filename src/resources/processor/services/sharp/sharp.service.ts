@@ -173,4 +173,38 @@ export class SharpService {
       );
     }
   }
+
+  async verticalFlipImage(
+    imageBuffer: Buffer,
+  ) {
+    try {
+      this.logger.debug(`flipping image vertical`);
+      return await this.imageProcessor(imageBuffer)
+        .flip()
+        .toBuffer();
+    } catch (error) {
+      this.logger.error(`Error flipping image vertical: ${error}`);
+      throw new InternalServerErrorException(
+        error.message,
+        `Error flipping image vertical`,
+      );
+    }
+  }
+
+  async horizontalFlipImage(
+    imageBuffer: Buffer,
+  ) {
+    try {
+      this.logger.debug(`flipping image vertical`);
+      return await this.imageProcessor(imageBuffer)
+        .flop()
+        .toBuffer();
+    } catch (error) {
+      this.logger.error(`Error flipping image vertical: ${error}`);
+      throw new InternalServerErrorException(
+        error.message,
+        `Error flipping image vertical`,
+      );
+    }
+  }
 }
