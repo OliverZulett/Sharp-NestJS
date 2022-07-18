@@ -64,6 +64,24 @@ export class ProcessorService {
         imageProperties.effectsProperties,
       );
     }
+    if (imageProperties.effectsProperties) {
+      imageBuffer = await this.sharpService.setImageEffects(
+        imageBuffer,
+        imageProperties.effectsProperties,
+      );
+    }
+    if (imageProperties.trimLevel) {
+      imageBuffer = await this.sharpService.trimImage(
+        imageBuffer,
+        imageProperties.trimLevel,
+      );
+    }
+    if (imageProperties.transparencyBackgroundColor) {
+      imageBuffer = await this.sharpService.setTransparencyBackgroundColor(
+        imageBuffer,
+        imageProperties.transparencyBackgroundColor,
+      );
+    }
     const { format } = await this.sharpService.getMetadata(imageBuffer);
     return this.sharpService.storeImage(
       imageBuffer,

@@ -246,4 +246,36 @@ export class SharpService {
       );
     }
   }
+
+  async trimImage(imageBuffer: Buffer, trimLevel: number) {
+    try {
+      this.logger.debug(`trim image`);
+      return await this.imageProcessor(imageBuffer)
+        .trim(trimLevel || 10)
+        .toBuffer();
+    } catch (error) {
+      this.logger.error(`Error trim image: ${error}`);
+      throw new InternalServerErrorException(error.message, `Error trim image`);
+    }
+  }
+
+  async setTransparencyBackgroundColor(
+    imageBuffer: Buffer,
+    transparencyBackgroundColor: sharp.Color,
+  ) {
+    try {
+      this.logger.debug(`setting transparency background color`);
+      return await this.imageProcessor(imageBuffer)
+        .flatten({ background: transparencyBackgroundColor })
+        .toBuffer();
+    } catch (error) {
+      this.logger.error(
+        `Error setting transparency background color: ${error}`,
+      );
+      throw new InternalServerErrorException(
+        error.message,
+        `Error setting transparency background color`,
+      );
+    }
+  }
 }

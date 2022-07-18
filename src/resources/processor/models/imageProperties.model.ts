@@ -46,11 +46,13 @@ export interface ImageProperties {
     negate: boolean;
     grayscale: boolean;
     threshold: number;
-    thresholdGrayscale: boolean,
+    thresholdGrayscale: boolean;
     brightness: number;
     saturation: number;
     hue: number;
     lightness: number;
     tint: sharp.Color;
   };
+  trimLevel: number;
+  transparencyBackgroundColor: sharp.Color;
 }
