@@ -40,4 +40,17 @@ export interface ImageProperties {
   };
   horizontalFlip: boolean;
   verticalFlip: boolean;
+  effectsProperties: {
+    median: number;
+    blur: number;
+    negate: boolean;
+    grayscale: boolean;
+    threshold: number;
+    thresholdGrayscale: boolean,
+    brightness: number;
+    saturation: number;
+    hue: number;
+    lightness: number;
+    tint: sharp.Color;
+  };
 }

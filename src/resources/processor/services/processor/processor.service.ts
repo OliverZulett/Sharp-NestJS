@@ -53,13 +53,15 @@ export class ProcessorService {
       );
     }
     if (imageProperties.verticalFlip) {
-      imageBuffer = await this.sharpService.verticalFlipImage(
-        imageBuffer
-      );
+      imageBuffer = await this.sharpService.verticalFlipImage(imageBuffer);
     }
     if (imageProperties.horizontalFlip) {
-      imageBuffer = await this.sharpService.horizontalFlipImage(
-        imageBuffer
+      imageBuffer = await this.sharpService.horizontalFlipImage(imageBuffer);
+    }
+    if (imageProperties.effectsProperties) {
+      imageBuffer = await this.sharpService.setImageEffects(
+        imageBuffer,
+        imageProperties.effectsProperties,
       );
     }
     const { format } = await this.sharpService.getMetadata(imageBuffer);

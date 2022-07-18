@@ -174,14 +174,10 @@ export class SharpService {
     }
   }
 
-  async verticalFlipImage(
-    imageBuffer: Buffer,
-  ) {
+  async verticalFlipImage(imageBuffer: Buffer) {
     try {
       this.logger.debug(`flipping image vertical`);
-      return await this.imageProcessor(imageBuffer)
-        .flip()
-        .toBuffer();
+      return await this.imageProcessor(imageBuffer).flip().toBuffer();
     } catch (error) {
       this.logger.error(`Error flipping image vertical: ${error}`);
       throw new InternalServerErrorException(
@@ -191,19 +187,62 @@ export class SharpService {
     }
   }
 
-  async horizontalFlipImage(
-    imageBuffer: Buffer,
-  ) {
+  async horizontalFlipImage(imageBuffer: Buffer) {
     try {
       this.logger.debug(`flipping image vertical`);
-      return await this.imageProcessor(imageBuffer)
-        .flop()
-        .toBuffer();
+      return await this.imageProcessor(imageBuffer).flop().toBuffer();
     } catch (error) {
       this.logger.error(`Error flipping image vertical: ${error}`);
       throw new InternalServerErrorException(
         error.message,
         `Error flipping image vertical`,
+      );
+    }
+  }
+
+  async setImageEffects(
+    imageBuffer: Buffer,
+    effectsProperties: {
+      median: number;
+      blur: number;
+      negate: boolean;
+      grayscale: boolean;
+      threshold: number;
+      thresholdGrayscale: boolean;
+      brightness: number;
+      saturation: number;
+      hue: number;
+      lightness: number;
+      tint: sharp.Color;
+    },
+  ) {
+    try {
+      this.logger.debug(`applying image effects`);
+      if (effectsProperties.threshold) {
+        imageBuffer = await this.imageProcessor(imageBuffer)
+          .threshold(effectsProperties.threshold || 120, {
+            grayscale: effectsProperties.thresholdGrayscale || false,
+          })
+          .toBuffer();
+      }
+      return await this.imageProcessor(imageBuffer)
+        .median(effectsProperties.median || 3)
+        .blur(effectsProperties.blur || 0.3)
+        .negate(effectsProperties.negate || false)
+        .grayscale(effectsProperties.grayscale || false)
+        .modulate({
+          brightness: effectsProperties.brightness || 1,
+          saturation: effectsProperties.saturation || 1,
+          hue: effectsProperties.hue || 0,
+          lightness: effectsProperties.lightness || 1,
+        })
+        .tint(effectsProperties.tint)
+        .toBuffer();
+    } catch (error) {
+      this.logger.error(`Error applying image effects: ${error}`);
+      throw new InternalServerErrorException(
+        error.message,
+        `Error applying image effects`,
       );
     }
   }
