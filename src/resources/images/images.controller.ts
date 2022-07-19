@@ -10,16 +10,31 @@ import {
   FileFieldsInterceptor,
   FileInterceptor,
 } from '@nestjs/platform-express';
-import { ApiTags } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
 import { ImagesService } from './images.service';
 import { v4 as uuidv4 } from 'uuid';
 import { extname } from 'path';
+import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('images')
 @Controller('images')
 export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
 
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'file',
+        },
+      },
+    },
+  })
+  @ApiCreatedResponse({
+    description: 'File uploaded successfully'
+  })
   @Post('upload-file')
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(@UploadedFile() file: Express.Multer.File) {
@@ -27,6 +42,20 @@ export class ImagesController {
     return file;
   }
 
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'file',
+        },
+      },
+    },
+  })
+  @ApiCreatedResponse({
+    description: 'File stored successfully'
+  })
   @Post('store-file')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -45,6 +74,23 @@ export class ImagesController {
     return;
   }
 
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file1: {
+          type: 'file',
+        },
+        file2: {
+          type: 'file',
+        }
+      },
+    },
+  })
+  @ApiCreatedResponse({
+    description: 'Files stored successfully'
+  })
   @Post('store-files')
   @UseInterceptors(
     FileFieldsInterceptor(
@@ -81,6 +127,26 @@ export class ImagesController {
     return;
   }
 
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'file',
+        },
+        body: {
+          type: 'object',
+          example: {
+            "name": "file name"
+          }
+        }
+      },
+    },
+  })
+  @ApiCreatedResponse({
+    description: 'File processed successfully'
+  })
   @Post('process')
   @UseInterceptors(
     FileInterceptor('file', {

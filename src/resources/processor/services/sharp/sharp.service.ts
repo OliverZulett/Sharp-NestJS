@@ -17,20 +17,30 @@ export class SharpService {
   async getMetadata(imageBuffer: Buffer) {
     try {
       this.logger.debug('getting image metadata');
-      return this.imageProcessor(imageBuffer).metadata();
+      return await this.imageProcessor(imageBuffer).metadata();
     } catch (error) {
-      this.logger.error(error);
-      throw new InternalServerErrorException(error.message);
+      this.logger.error(
+        `Error getting image metadata: ${error}`,
+      );
+      throw new InternalServerErrorException(
+        error.message,
+        `Error getting image metadata`,
+      );
     }
   }
 
-  getStats(imagePath: string) {
+  async getStats(imageBuffer: Buffer) {
     try {
-      this.logger.debug('getting image metadata', imagePath);
-      return this.imageProcessor(imagePath).stats();
+      this.logger.debug('getting image stats');
+      return await this.imageProcessor(imageBuffer).stats();
     } catch (error) {
-      this.logger.error(error);
-      throw new InternalServerErrorException(error.message);
+      this.logger.error(
+        `Error getting image stats: ${error}`,
+      );
+      throw new InternalServerErrorException(
+        error.message,
+        `Error getting image stats`,
+      );
     }
   }
 
@@ -69,11 +79,11 @@ export class SharpService {
         `convert image: ${imagePath} to ${convertProperties.format}`,
       );
       if (convertProperties.options) {
-        return this.imageProcessor(imagePath)
+        return await this.imageProcessor(imagePath)
           .toFormat(convertProperties.format, convertProperties.options)
           .toBuffer();
       }
-      return this.imageProcessor(imagePath)
+      return await this.imageProcessor(imagePath)
         .toFormat(convertProperties.format)
         .toBuffer();
     } catch (error) {
@@ -105,7 +115,7 @@ export class SharpService {
   ) {
     try {
       this.logger.debug(`resizing image`);
-      return this.imageProcessor(imageBuffer)
+      return await this.imageProcessor(imageBuffer)
         .resize(resizeProperties.width, resizeProperties.height)
         .toBuffer();
     } catch (error) {
@@ -120,7 +130,7 @@ export class SharpService {
   async getImageBuffer(imagePath: string) {
     try {
       this.logger.debug(`getting image buffer`);
-      return this.imageProcessor(imagePath).toBuffer();
+      return await this.imageProcessor(imagePath).toBuffer();
     } catch (error) {
       this.logger.error(`Error getting image buffer: ${error}`);
       throw new InternalServerErrorException(
@@ -141,7 +151,7 @@ export class SharpService {
   ) {
     try {
       this.logger.debug(`cropping image`);
-      return this.imageProcessor(imageBuffer)
+      return await this.imageProcessor(imageBuffer)
         .extract(cropProperties)
         .toBuffer();
     } catch (error) {

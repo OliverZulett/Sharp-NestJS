@@ -90,12 +90,14 @@ export class ProcessorService {
     );
   }
 
-  getMetadata(image: Express.Multer.File) {
-    return this.sharpService.getMetadata(image.buffer);
+  async getMetadata(image: Express.Multer.File) {
+    let imageBuffer = await this.sharpService.getImageBuffer(image.path);
+    return this.sharpService.getMetadata(imageBuffer);
   }
 
-  getStats(image: Express.Multer.File) {
-    return this.sharpService.getStats(image.path);
+  async getStats(image: Express.Multer.File) {
+    let imageBuffer = await this.sharpService.getImageBuffer(image.path);
+    return this.sharpService.getStats(imageBuffer);
   }
 
   storeImage(image: Express.Multer.File) {
