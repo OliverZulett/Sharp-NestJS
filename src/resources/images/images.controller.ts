@@ -14,7 +14,12 @@ import { diskStorage } from 'multer';
 import { ImagesService } from './images.service';
 import { v4 as uuidv4 } from 'uuid';
 import { extname } from 'path';
-import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiCreatedResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('images')
 @Controller('images')
@@ -33,7 +38,7 @@ export class ImagesController {
     },
   })
   @ApiCreatedResponse({
-    description: 'File uploaded successfully'
+    description: 'File uploaded successfully',
   })
   @Post('upload-file')
   @UseInterceptors(FileInterceptor('file'))
@@ -54,7 +59,7 @@ export class ImagesController {
     },
   })
   @ApiCreatedResponse({
-    description: 'File stored successfully'
+    description: 'File stored successfully',
   })
   @Post('store-file')
   @UseInterceptors(
@@ -84,12 +89,12 @@ export class ImagesController {
         },
         file2: {
           type: 'file',
-        }
+        },
       },
     },
   })
   @ApiCreatedResponse({
-    description: 'Files stored successfully'
+    description: 'Files stored successfully',
   })
   @Post('store-files')
   @UseInterceptors(
@@ -138,14 +143,14 @@ export class ImagesController {
         body: {
           type: 'object',
           example: {
-            "name": "file name"
-          }
-        }
+            name: 'file name',
+          },
+        },
       },
     },
   })
   @ApiCreatedResponse({
-    description: 'File processed successfully'
+    description: 'File processed successfully',
   })
   @Post('process')
   @UseInterceptors(

@@ -5,6 +5,6 @@ import { SharpService } from './services/sharp/sharp.service';
 
 @Module({
   controllers: [ProcessorController],
-  providers: [ProcessorService, SharpService]
+  providers: [ProcessorService, SharpService],
 })
 export class ProcessorModule {}

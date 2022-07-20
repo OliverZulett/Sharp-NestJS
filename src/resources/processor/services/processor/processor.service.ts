@@ -91,12 +91,12 @@ export class ProcessorService {
   }
 
   async getMetadata(image: Express.Multer.File) {
-    let imageBuffer = await this.sharpService.getImageBuffer(image.path);
+    const imageBuffer = await this.sharpService.getImageBuffer(image.path);
     return this.sharpService.getMetadata(imageBuffer);
   }
 
   async getStats(image: Express.Multer.File) {
-    let imageBuffer = await this.sharpService.getImageBuffer(image.path);
+    const imageBuffer = await this.sharpService.getImageBuffer(image.path);
     return this.sharpService.getStats(imageBuffer);
   }
 
@@ -105,8 +105,26 @@ export class ProcessorService {
     const fileExt = extname(image.originalname);
     return this.sharpService.storeImage(
       image.buffer,
-      './images',
+      UNPROCESSED_IMAGE_PATH,
       `${fileName}${fileExt}`,
+    );
+  }
+
+  async composeImages(
+    image1: Express.Multer.File,
+    image2: Express.Multer.File,
+    compositeOptions: any,
+  ) {
+    const imageBuffer = await this.sharpService.composeImages(
+      image1.buffer,
+      image2.buffer,
+      compositeOptions,
+    );
+    const { format } = await this.sharpService.getMetadata(imageBuffer);
+    return this.sharpService.storeImage(
+      imageBuffer,
+      PROCESSED_IMAGE_PATH,
+      `composed-image.${format}`,
     );
   }
 }

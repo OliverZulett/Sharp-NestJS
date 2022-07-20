@@ -19,9 +19,7 @@ export class SharpService {
       this.logger.debug('getting image metadata');
       return await this.imageProcessor(imageBuffer).metadata();
     } catch (error) {
-      this.logger.error(
-        `Error getting image metadata: ${error}`,
-      );
+      this.logger.error(`Error getting image metadata: ${error}`);
       throw new InternalServerErrorException(
         error.message,
         `Error getting image metadata`,
@@ -34,9 +32,7 @@ export class SharpService {
       this.logger.debug('getting image stats');
       return await this.imageProcessor(imageBuffer).stats();
     } catch (error) {
-      this.logger.error(
-        `Error getting image stats: ${error}`,
-      );
+      this.logger.error(`Error getting image stats: ${error}`);
       throw new InternalServerErrorException(
         error.message,
         `Error getting image stats`,
@@ -285,6 +281,41 @@ export class SharpService {
       throw new InternalServerErrorException(
         error.message,
         `Error setting transparency background color`,
+      );
+    }
+  }
+
+  async composeImages(
+    imageBuffer1: Buffer,
+    imageBuffer2: Buffer,
+    compositeOptions: sharp.OverlayOptions,
+  ) {
+    try {
+      this.logger.debug(`composing images`);
+
+      imageBuffer1 = await this.imageProcessor(imageBuffer1).png().toBuffer();
+
+      const { width: image2Width, height: image2Height } =
+        await this.getMetadata(imageBuffer2);
+
+      imageBuffer1 = await sharp(imageBuffer1)
+        .resize({
+          width: image2Width,
+          height: image2Height,
+          position: 'centre',
+        })
+        .toBuffer();
+
+      compositeOptions.input = imageBuffer2;
+
+      return await this.imageProcessor(imageBuffer1)
+        .composite([compositeOptions])
+        .toBuffer();
+    } catch (error) {
+      this.logger.error(`Error composing images: ${error}`);
+      throw new InternalServerErrorException(
+        error.message,
+        `Error composing images`,
       );
     }
   }

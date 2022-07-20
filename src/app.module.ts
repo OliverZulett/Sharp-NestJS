@@ -4,11 +4,7 @@ import { ImagesModule } from './resources/images/images.module';
 import { ProcessorModule } from './resources/processor/processor.module';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot(),
-    ImagesModule,
-    ProcessorModule
-  ],
+  imports: [ConfigModule.forRoot(), ImagesModule, ProcessorModule],
   controllers: [],
   providers: [],
 })
